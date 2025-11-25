@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { poppins } from "@/src/utilities";
+import { poppins, inter } from "@/src/utilities";
 import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
@@ -15,11 +14,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning >
-      <body
-        className={`${poppins.className} antialiased`}
-      >
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem >
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${poppins.className} ${inter.variable} antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {children}
         </ThemeProvider>
       </body>

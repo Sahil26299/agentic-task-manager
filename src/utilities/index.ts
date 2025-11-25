@@ -1,4 +1,4 @@
-import { poppins } from "./themes/font";
+import { poppins, inter } from "./themes/font";
 import {
   getSessionStorageItem,
   keys,
@@ -12,4 +12,5 @@ export {
   removeSessionStorageItem,
   setSessionStorageItem,
   poppins,
+  inter,
 };

@@ -1,4 +1,4 @@
-import { Poppins } from "next/font/google";
+import { Poppins, Inter } from "next/font/google";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -6,4 +6,9 @@ const poppins = Poppins({
   subsets: ["latin"],
 });
 
-export { poppins };
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+export { poppins, inter };

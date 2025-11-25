@@ -28,11 +28,15 @@ const TaskCard = ({
   return (
     <div
       onClick={() => onClick(task)}
-      className={`${isUrgent ? "border-2 border-red-800/40" : "border border-gray-200 dark:border-gray-700"} hover:scale-105 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow flex flex-col h-full group cursor-pointer`}
+      className={`${
+        isUrgent
+          ? "border-2 border-red-800/40"
+          : "border border-gray-200 dark:border-gray-700"
+      } hover:scale-105 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 hover:shadow-md transition-all flex flex-col h-full group cursor-pointer`}
     >
       <div className="flex justify-between items-start mb-3">
         <h3
-          className={`text-lg font-semibold line-clamp-1 ${
+          className={`text-lg font-semibold line-clamp-1 font-inter ${
             task.isCompleted
               ? "text-gray-400 line-through"
               : "text-gray-900 dark:text-white"
@@ -65,7 +69,7 @@ const TaskCard = ({
       </div>
 
       <div
-        className={`prose prose-sm dark:prose-invert mb-4 line-clamp-3 flex-grow ${
+        className={`prose prose-sm dark:prose-invert mb-4 line-clamp-3 text-sm font-inter ${
           task.isCompleted ? "opacity-50" : ""
         }`}
         dangerouslySetInnerHTML={{ __html: task.body }}

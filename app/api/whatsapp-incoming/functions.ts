@@ -36,7 +36,7 @@ export const extractTaskDetails = async (message: string) => {
 
     const structuredLlm = model.withStructuredOutput(extractionSchema);
 
-    const prompt = `You are an assistant that extracts 2 mandatory fields from the message: title and body and 3 optional fields from the message: reminder, tags and isCompleted. If in reminder user only provides date but not time, then consider default time to be 09:00 AM for that day.
+    const prompt = `You are an assistant that extracts 2 mandatory fields from the message: title and body and 3 optional fields from the message: reminder / due date, tags and isCompleted. If in reminder user only provides date but not time, then consider default time to be 09:00 AM for that day. If you get a single sentence as a message, then use that message as a body and summarize that message and use it as a title.
     Extract these details from the following message:
     "${message}"
     `;

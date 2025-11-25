@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -36,18 +37,20 @@ const Editor = ({ content, onChange, editable = true }: EditorProps) => {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none max-w-none p-4",
+          "prose prose-sm dark:prose-invert focus:outline-none max-w-none p-2 text-[15px] font-inter [&_*]:text-slate-300 [&_strong]:text-slate-100 [&_p]:my-1 [&_h1]:my-1 [&_h2]:my-1 [&_ul]:my-1 [&_ol]:my-1",
       },
     },
     immediatelyRender: false,
   });
 
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content);
+    }
+  }, [content, editor]);
+
   if (!editor) {
     return null;
-  }
-
-  if (!editable) {
-    return <EditorContent editor={editor} className="w-full" />;
   }
 
   return (
@@ -151,7 +154,10 @@ const Editor = ({ content, onChange, editable = true }: EditorProps) => {
           <ListOrdered size={18} />
         </button>
       </div>
-      <EditorContent editor={editor} />
+      <EditorContent
+        editor={editor}
+        className="max-h-[370px] overflow-y-auto"
+      />
     </div>
   );
 };

@@ -32,11 +32,11 @@ const TaskModal = ({ task, isUrgent, isOpen, onClose }: TaskModalProps) => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ type: "spring", duration: 0.5 }}
-              className="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto max-h-[90vh] flex flex-col"
+              className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto max-h-[90vh] flex flex-col"
             >
               <div className="flex justify-between items-start p-6 border-b border-gray-100 dark:border-gray-800">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 font-inter">
                     {task.title}
                   </h2>
                   <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
@@ -50,7 +50,7 @@ const TaskModal = ({ task, isUrgent, isOpen, onClose }: TaskModalProps) => {
                           isUrgent
                             ? "text-red-600 dark:text-red-400 font-semibold animate-pulse"
                             : "text-blue-600 dark:text-blue-400"
-                        }`}
+                        } font-inter`}
                       >
                         <Clock size={14} />
                         Due {dayjs(task.reminder).format("MMM D, h:mm A")}
@@ -68,7 +68,7 @@ const TaskModal = ({ task, isUrgent, isOpen, onClose }: TaskModalProps) => {
 
               <div className="p-6 overflow-y-auto custom-scrollbar">
                 <div
-                  className="prose prose-lg dark:prose-invert max-w-none"
+                  className="prose prose-lg dark:prose-invert max-w-none font-inter text-slate-300 [&_strong]:text-slate-100 [&_p]:my-1 [&_h1]:my-1 [&_h2]:my-1 [&_ul]:my-1 [&_ol]:my-1"
                   dangerouslySetInnerHTML={{ __html: task.body }}
                 />
               </div>

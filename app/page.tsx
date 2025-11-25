@@ -7,6 +7,8 @@ import TaskForm from "@/src/components/TaskForm";
 import TaskModal from "@/src/components/TaskModal";
 import { ITask } from "@/models/Task";
 import dayjs from "dayjs";
+import FloatingShapes from "@/components/FloatingShapes";
+import WhatsAppBanner from "@/src/components/WhatsAppBanner";
 
 export default function Home() {
   const [tasks, setTasks] = useState<ITask[]>([]);
@@ -38,7 +40,7 @@ export default function Home() {
   const handleCreateTask = async (data: {
     title: string;
     body: string;
-    reminder?: string;
+    reminder?: any;
   }) => {
     try {
       const res = await fetch("/api/tasks", {
@@ -57,7 +59,7 @@ export default function Home() {
   const handleUpdateTask = async (data: {
     title: string;
     body: string;
-    reminder?: string;
+    reminder?: any;
   }) => {
     if (!editingTask) return;
     try {
@@ -92,7 +94,7 @@ export default function Home() {
   };
 
   const handleToggleComplete = async (task: ITask) => {
-    setTaskEditing(task._id)
+    setTaskEditing(task._id);
     try {
       const res = await fetch(`/api/tasks/${task._id as unknown as string}`, {
         method: "PUT",
@@ -104,9 +106,8 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Failed to toggle complete:", error);
-    }
-    finally{
-      setTaskEditing(null)
+    } finally {
+      setTaskEditing(null);
     }
   };
 
@@ -125,25 +126,26 @@ export default function Home() {
     setIsModalOpen(true);
   };
 
-  const isUrgent = ((task: ITask | null) => {
+  const isUrgent = (task: ITask | null) => {
     if (!task) return false;
     if (!task.reminder) return false;
     const reminderDate = dayjs(task.reminder);
     const now = dayjs();
     const diffInMinutes = reminderDate.diff(now, "minute");
     return diffInMinutes <= 30 && diffInMinutes >= 0;
-  });
+  };
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 sm:p-10 font-sans">
-      <div className="max-w-7xl mx-auto">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 sm:p-10 font-sans relative overflow-hidden">
+      <FloatingShapes />
+      <div className="max-w-7xl mx-auto relative z-10">
         <header className="flex justify-between items-center mb-10 border-b-2 border-slate-800">
           <div>
             <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-              My Tasks
+              📋 My Tasks
             </h1>
             <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">
-              Manage your notes and tasks efficiently.
+              Manage your notes and tasks efficiently. 🎯
             </p>
           </div>
           <button
@@ -195,6 +197,10 @@ export default function Home() {
             ))}
           </div>
         )}
+        <hr className="my-8" />
+        <div>
+          <WhatsAppBanner />
+        </div>
 
         <TaskForm
           isOpen={isFormOpen}

@@ -1,16 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { ChevronDownIcon, X } from "lucide-react";
 import Editor from "./Editor";
 import { ITask } from "@/models/Task";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import dayjs from "dayjs";
 
 interface TaskFormProps {
   task?: ITask | null;
   onSave: (data: {
     title: string;
     body: string;
-    reminder?: string;
+    reminder?: any;
   }) => Promise<void>;
   onCancel: () => void;
   isOpen: boolean;
@@ -19,20 +27,24 @@ interface TaskFormProps {
 const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [reminder, setReminder] = useState("");
+  const [openDatePopover, setOpenDatePopover] = useState(false);
+  const [date, setDate] = useState<any | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+  console.log(task, body, "task");
 
   useEffect(() => {
     if (task) {
       setTitle(task.title);
       setBody(task.body);
-      setReminder(
-        task.reminder ? new Date(task.reminder).toISOString().slice(0, 16) : ""
+      setDate(
+        task.reminder
+          ? dayjs(new Date(task?.reminder)).format("MM/DD/YYYY")
+          : undefined
       );
     } else {
       setTitle("");
       setBody("");
-      setReminder("");
+      setDate(undefined);
     }
   }, [task, isOpen]);
 
@@ -42,7 +54,7 @@ const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
 
     setLoading(true);
     try {
-      await onSave({ title, body, reminder: reminder || undefined });
+      await onSave({ title, body, reminder: date || undefined });
       onCancel();
     } catch (error) {
       console.error("Failed to save task:", error);
@@ -55,7 +67,7 @@ const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
         <div className="flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-800">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             {task ? "Edit Task" : "New Task"}
@@ -84,8 +96,8 @@ const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-              placeholder="What needs to be done?"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all font-inter"
+              placeholder="Enter a title..."
               required
             />
           </div>
@@ -104,13 +116,39 @@ const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
             >
               Reminder (Optional)
             </label>
-            <input
-              type="datetime-local"
-              id="reminder"
-              value={reminder}
-              onChange={(e) => setReminder(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-            />
+            <div className="flex items-center gap-2">
+              <Popover open={openDatePopover} onOpenChange={setOpenDatePopover}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    id="date-picker"
+                    className="h-[40px] justify-between font-normal bg-white dark:bg-gray-800 rounded-md font-inter"
+                  >
+                    {date
+                      ? dayjs(new Date(date)).format("DD MMM YYYY")
+                      : "Select date"}
+                    <ChevronDownIcon />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-auto overflow-hidden p-0"
+                  align="start"
+                >
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    captionLayout="dropdown"
+                    onSelect={(value) => {
+                      console.log(value, "value");
+                      if (value) {
+                        setDate(dayjs(new Date(value)).format("MM/DD/YYYY"));
+                        setOpenDatePopover(false);
+                      }
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
         </form>
 
