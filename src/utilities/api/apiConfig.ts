@@ -1,8 +1,7 @@
 export const endpoints = {
-    TASKS: "/tasks",
-    AUTH_LOGIN: "/auth/login",
-    AUTH_SIGNUP: "/auth/signup"
-}
+  TASKS: "/tasks",
+  AUTH_LOGIN: "/auth/login",
+  AUTH_SIGNUP: "/auth/signup",
+};
 
-
-export const API_BASE_URL = "http://localhost:3000/api";
+export const API_BASE_URL = "/api";
