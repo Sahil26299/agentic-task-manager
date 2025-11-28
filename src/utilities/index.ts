@@ -5,6 +5,7 @@ import {
   removeSessionStorageItem,
   setSessionStorageItem,
 } from "./storage/sessionStorageUtils";
+import { endpoints, API_BASE_URL } from "./api/apiConfig";
 
 export {
   getSessionStorageItem,
@@ -13,4 +14,6 @@ export {
   setSessionStorageItem,
   poppins,
   inter,
+  endpoints,
+  API_BASE_URL
 };

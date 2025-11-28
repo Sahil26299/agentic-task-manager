@@ -11,19 +11,41 @@ const updateTaskSchema = z.object({
   isCompleted: z.boolean().optional(),
 });
 
+import { verifyToken } from "@/lib/auth";
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
+
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = verifyToken(token);
+
+    if (!decoded || typeof decoded !== "object" || !decoded.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
     const body = await request.json();
     const validatedData = updateTaskSchema.parse(body);
 
-    const task = await Task.findByIdAndUpdate(id, validatedData, { new: true });
+    const task = await Task.findOneAndUpdate(
+      { _id: id, userId: decoded.userId },
+      validatedData,
+      { new: true }
+    );
     if (!task) {
-      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Task not found or unauthorized" },
+        { status: 404 }
+      );
     }
     return NextResponse.json(task);
   } catch (error) {
@@ -46,10 +68,29 @@ export async function DELETE(
 ) {
   try {
     await dbConnect();
+
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = verifyToken(token);
+
+    if (!decoded || typeof decoded !== "object" || !decoded.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await params;
-    const task = await Task.findByIdAndDelete(id);
+    const task = await Task.findOneAndDelete({
+      _id: id,
+      userId: decoded.userId,
+    });
     if (!task) {
-      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Task not found or unauthorized" },
+        { status: 404 }
+      );
     }
     return NextResponse.json({ message: "Task deleted successfully" });
   } catch (error) {

@@ -11,13 +11,30 @@ const createTaskSchema = z.object({
   isCompleted: z.boolean().optional(),
 });
 
-export async function GET() {
+import { verifyToken } from "@/lib/auth";
+
+export async function GET(request: Request) {
   try {
     await dbConnect();
-    const tasks = await Task.find({}).sort({ createdAt: -1 });
+
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = verifyToken(token);
+
+    if (!decoded || typeof decoded !== "object" || !decoded.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const tasks = await Task.find({ userId: decoded.userId }).sort({
+      createdAt: -1,
+    });
     return NextResponse.json(tasks);
   } catch (error) {
-    console.log(error,'error');
+    console.log(error, "error");
     return NextResponse.json(
       { error: "Failed to fetch tasks" },
       { status: 500 }
@@ -28,6 +45,19 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     await dbConnect();
+
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = verifyToken(token);
+
+    if (!decoded || typeof decoded !== "object" || !decoded.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const validatedData = createTaskSchema.parse(body);
 
@@ -36,11 +66,12 @@ export async function POST(request: Request) {
       reminder: validatedData.reminder
         ? new Date(validatedData.reminder)
         : undefined,
+      userId: decoded.userId,
     };
 
     const task = await Task.create(taskData);
     return NextResponse.json(task, { status: 201 });
-  } catch (error) {    
+  } catch (error) {
     if (error instanceof ZodError) {
       return NextResponse.json(
         { error: (error as any).errors },

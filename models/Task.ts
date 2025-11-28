@@ -17,6 +17,7 @@ const TaskSchema: Schema = new Schema(
     reminder: { type: Date },
     tags: { type: [String], default: [] },
     isCompleted: { type: Boolean, default: false },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   },
   { timestamps: true }
 );
