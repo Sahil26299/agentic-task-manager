@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Loader2, LogOut, MessageCircle } from "lucide-react";
+import {
+  Plus,
+  Loader2,
+  LogOut,
+  UserRoundCog,
+  Headset,
+  User,
+} from "lucide-react";
 import TaskCard from "@/src/components/TaskCard";
 import TaskForm from "@/src/components/TaskForm";
 import TaskModal from "@/src/components/TaskModal";
@@ -20,8 +27,29 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function Home() {
   const [tasks, setTasks] = useState<ITask[]>([]);
@@ -31,6 +59,8 @@ export default function Home() {
   const [editingTask, setEditingTask] = useState<ITask | null>(null);
   const [selectedTask, setSelectedTask] = useState<ITask | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   const {
     token,
     logout,
@@ -39,6 +69,7 @@ export default function Home() {
     loading: authLoading,
   } = useAuth();
   const router = useRouter();
+  console.log(user, "user");
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -219,48 +250,161 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <button
               onClick={openCreateModal}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white md:px-6 px-4 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 transition-all transform hover:-translate-y-0.5"
+              className="h-[45px] flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white md:px-6 px-4 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 transition-all transform hover:-translate-y-0.5"
             >
               <Plus size={20} />
               <span className="md:flex hidden">New Task</span>
             </button>
-            <Dialog>
-              <DialogTrigger>
-                <span
-                  className="flex items-center gap-2 bg-orange-700 hover:bg-orange-700 text-white px-4 py-3 rounded-xl font-semibold shadow-lg shadow-red-600/20 hover:shadow-red-600/30 transition-all transform hover:-translate-y-0.5"
-                  title="Logout"
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size={"icon"}
+                  className="ring-0 border-none outline-none h-[45px] flex items-center gap-2 bg-orange-700 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-red-600/20 hover:shadow-red-600/30 transition-all transform hover:-translate-y-0.5"
                 >
-                  <LogOut size={20} />
-                </span>
-              </DialogTrigger>
+                  <UserRoundCog size={24} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuLabel className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    <User size={18} />
+                    My Account
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuGroup className="ml-2">
+                  <DropdownMenuItem onSelect={() => setIsProfileOpen(true)}>
+                    Profile
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="flex items-center gap-2">
+                  <Headset size={18} /> Developer Support
+                </DropdownMenuLabel>
+                <DropdownMenuGroup className="ml-2">
+                  <DropdownMenuItem>
+                    <Link
+                      href="mailto:sahillokhande94@gmail.com"
+                      target="_blank"
+                      className="w-full h-full"
+                    >
+                      Email
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link
+                      href="https://github.com/Sahil26299"
+                      target="_blank"
+                      className="w-full h-full"
+                    >
+                      GitHub
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link
+                      href="https://www.linkedin.com/in/sahillokhande26"
+                      target="_blank"
+                      className="w-full h-full"
+                    >
+                      Linkedin
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link
+                      href="https://my-portfolio-next-mauve.vercel.app/"
+                      target="_blank"
+                      className="w-full h-full"
+                    >
+                      Portfolio
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => setIsLogoutOpen(true)}>
+                  <div className="flex items-center gap-2">
+                    <LogOut size={18} /> Log out
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Logout</DialogTitle>
+                  <DialogTitle>Edit profile (🚧 Under development)</DialogTitle>
                   <DialogDescription>
-                    Are you sure you want to logout?
+                    Make changes to your profile here. Click save when
+                    you&apos;re done.
                   </DialogDescription>
                 </DialogHeader>
-                <DialogFooter className="flex items-center justify-center" >
-                  <DialogClose className="w-[120px]">
-                    <span
-                      className="flex items-center gap-2 border-orange-700 border text-orange-700 px-4 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5"
-                    >
-                      Cancel
-                    </span>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Name
+                    </Label>
+                    <Input
+                      id="name"
+                      disabled
+                      defaultValue={user?.name}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="email" className="text-right">
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      disabled
+                      defaultValue={user?.email}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="old-password" className="text-right">
+                      Old Password
+                    </Label>
+                    <Input
+                      id="old-password"
+                      disabled
+                      type="password"
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="new-password" className="text-right">
+                      New Password
+                    </Label>
+                    <Input
+                      disabled
+                      id="new-password"
+                      type="password"
+                      className="col-span-3"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
                   </DialogClose>
-                  <DialogClose className="w-[120px]">
-                    <span
-                      onClick={logout}
-                      className="flex items-center gap-2 bg-orange-700 hover:bg-orange-700 text-white px-4 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5"
-                      title="Logout"
-                    >
-                      <LogOut size={20} />
-                      Logout
-                    </span>
-                  </DialogClose>
+                  <Button disabled type="submit">Save changes</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+
+            <AlertDialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Logout</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to logout?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={logout}>Logout</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </header>
 
