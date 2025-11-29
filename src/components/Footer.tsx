@@ -47,7 +47,7 @@ function Footer() {
             </a>
           </div>
         </div>
-        <div className="mt-8 text-center text-sm text-gray-400 dark:text-gray-600">
+        <div className="mt-8 text-center text-sm text-slate-400 dark:text-gray-500">
           © {new Date().getFullYear()} TaskManager. All rights reserved.
         </div>
       </div>

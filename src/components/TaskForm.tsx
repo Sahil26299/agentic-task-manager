@@ -137,6 +137,7 @@ const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
                   <Calendar
                     mode="single"
                     selected={date}
+                    endMonth={new Date(2030, 0)}
                     captionLayout="dropdown"
                     onSelect={(value) => {
                       console.log(value, "value");

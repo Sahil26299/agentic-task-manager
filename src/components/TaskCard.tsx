@@ -69,7 +69,7 @@ const TaskCard = ({
       </div>
 
       <div
-        className={`prose prose-sm dark:prose-invert mb-4 line-clamp-3 text-sm font-inter ${
+        className={`prose prose-sm leading-[1.5] dark:prose-invert mb-4 line-clamp-4 text-sm font-inter [&_p]:my-1 [&_h1]:my-1 [&_h2]:my-1 [&_ul]:my-1 [&_ol]:my-1 ${
           task.isCompleted ? "opacity-50" : ""
         }`}
         dangerouslySetInnerHTML={{ __html: task.body }}

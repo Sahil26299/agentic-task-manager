@@ -37,7 +37,7 @@ const Editor = ({ content, onChange, editable = true }: EditorProps) => {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm dark:prose-invert focus:outline-none max-w-none p-2 text-[15px] font-inter [&_*]:text-slate-300 [&_strong]:text-slate-100 [&_p]:my-1 [&_h1]:my-1 [&_h2]:my-1 [&_ul]:my-1 [&_ol]:my-1",
+          "prose prose-sm dark:prose-invert focus:outline-none max-w-none p-2 text-[15px] leading-[1.5] font-inter [&_*]:text-slate-300 [&_strong]:text-slate-100 [&_p]:my-1 [&_h1]:my-1 [&_h2]:my-1 [&_ul]:my-1 [&_ol]:my-1",
       },
     },
     immediatelyRender: false,

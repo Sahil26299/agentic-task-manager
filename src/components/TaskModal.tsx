@@ -68,7 +68,7 @@ const TaskModal = ({ task, isUrgent, isOpen, onClose }: TaskModalProps) => {
 
               <div className="p-6 overflow-y-auto custom-scrollbar">
                 <div
-                  className="prose prose-lg dark:prose-invert max-w-none font-inter text-slate-300 [&_strong]:text-slate-100 [&_p]:my-1 [&_h1]:my-1 [&_h2]:my-1 [&_ul]:my-1 [&_ol]:my-1"
+                  className="prose prose-lg leading-[1.5] dark:prose-invert max-w-none font-inter text-slate-300 [&_strong]:text-slate-100 [&_p]:my-1 [&_h1]:my-1 [&_h2]:my-1 [&_ul]:my-1 [&_ol]:my-1"
                   dangerouslySetInnerHTML={{ __html: task.body }}
                 />
               </div>

@@ -1,16 +1,31 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle, MessageCircle, Shield } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle,
+  Menu,
+  MessageCircle,
+  Shield,
+} from "lucide-react";
 import Footer from "../src/components/Footer";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 font-sans relative overflow-hidden flex flex-col">
       {/* Navigation */}
       <nav className="relative z-10 max-w-7xl mx-auto w-full px-6 py-6 flex justify-between items-center">
-        <div className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+        <Link
+          href="/"
+          className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2"
+        >
           <span>📋</span> TaskManager
-        </div>
-        <div className="flex gap-4">
+        </Link>
+        <div className="hidden sm:flex gap-4">
           <Link
             href="/login"
             className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
@@ -24,32 +39,47 @@ export default function LandingPage() {
             Sign Up
           </Link>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className="sm:hidden" >
+            <button className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors">
+              <Menu />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+              <Link href="/login">Log In</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/signup">Sign Up</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </nav>
 
       {/* Hero Section */}
       <main className="grow relative z-10">
         <div className="max-w-7xl mx-auto px-6 py-20 sm:py-32 text-center">
-          <h1 className="text-5xl sm:text-7xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-8">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-8">
             Manage Tasks <br className="hidden sm:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
               Effortlessly
             </span>
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="sm:text-xl text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
             Organize your life with our simple yet powerful task manager. Add
             notes, track progress, and even manage tasks directly via WhatsApp
             on the go.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row sm:gap-4 gap-6 justify-center items-center">
             <Link
               href="/signup"
-              className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-lg transition-all shadow-xl shadow-blue-600/30 flex items-center gap-2 transform hover:-translate-y-1"
+              className="sm:px-8 sm:py-4 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold sm:text-lg text-base transition-all shadow-xl shadow-blue-600/30 flex items-center gap-2 transform hover:-translate-y-1"
             >
               Get Started Free <ArrowRight size={20} />
             </Link>
             <Link
               href="#features"
-              className="px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl font-bold text-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+              className="sm:px-8 sm:py-4 px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl font-bold sm:text-lg text-base border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
             >
               Learn More
             </Link>

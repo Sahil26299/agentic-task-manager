@@ -10,8 +10,18 @@ import dayjs from "dayjs";
 import WhatsAppBanner from "@/src/components/WhatsAppBanner";
 import { useAuth } from "@/components/AuthProvider";
 import { useRouter } from "next/navigation";
-import ApiBase from "twilio/lib/rest/ApiBase";
-import { endpoints } from "@/src/utilities";
+import { API_BASE_URL, endpoints } from "@/src/utilities";
+import Link from "next/link";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function Home() {
   const [tasks, setTasks] = useState<ITask[]>([]);
@@ -39,7 +49,7 @@ export default function Home() {
   const fetchTasks = async () => {
     if (!token) return;
     try {
-      const res = await fetch(`${ApiBase}${endpoints.TASKS}`, {
+      const res = await fetch(`${API_BASE_URL}${endpoints.TASKS}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -72,7 +82,7 @@ export default function Home() {
   }) => {
     if (!token) return;
     try {
-      const res = await fetch(`${ApiBase}${endpoints.TASKS}`, {
+      const res = await fetch(`${API_BASE_URL}${endpoints.TASKS}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +106,9 @@ export default function Home() {
     if (!editingTask || !token) return;
     try {
       const res = await fetch(
-        `${ApiBase}${endpoints.TASKS}/${editingTask._id as unknown as string}`,
+        `${API_BASE_URL}${endpoints.TASKS}/${
+          editingTask._id as unknown as string
+        }`,
         {
           method: "PUT",
           headers: {
@@ -118,7 +130,7 @@ export default function Home() {
     if (!token) return;
     if (!confirm("Are you sure you want to delete this task?")) return;
     try {
-      const res = await fetch(`${ApiBase}${endpoints.TASKS}/${id}`, {
+      const res = await fetch(`${API_BASE_URL}${endpoints.TASKS}/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -137,7 +149,7 @@ export default function Home() {
     setTaskEditing(task._id);
     try {
       const res = await fetch(
-        `${ApiBase}${endpoints.TASKS}/${task._id as unknown as string}`,
+        `${API_BASE_URL}${endpoints.TASKS}/${task._id as unknown as string}`,
         {
           method: "PUT",
           headers: {
@@ -193,10 +205,13 @@ export default function Home() {
     <main className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 sm:p-10 font-sans relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
         <header className="flex justify-between items-center mb-10 border-b-2 border-slate-800 pb-4">
-          <div>
-            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+          <div className="w-2/3">
+            <Link
+              href="/dashboard"
+              className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight"
+            >
               📋 My Tasks
-            </h1>
+            </Link>
             <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">
               Welcome, {user?.name}! Manage your notes and tasks efficiently. 🎯
             </p>
@@ -204,18 +219,48 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <button
               onClick={openCreateModal}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 transition-all transform hover:-translate-y-0.5"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white md:px-6 px-4 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 transition-all transform hover:-translate-y-0.5"
             >
               <Plus size={20} />
-              New Task
+              <span className="md:flex hidden">New Task</span>
             </button>
-            <button
-              onClick={logout}
-              className="flex items-center gap-2 bg-orange-700 hover:bg-orange-700 text-white px-4 py-3 rounded-xl font-semibold shadow-lg shadow-red-600/20 hover:shadow-red-600/30 transition-all transform hover:-translate-y-0.5"
-              title="Logout"
-            >
-              <LogOut size={20} />
-            </button>
+            <Dialog>
+              <DialogTrigger>
+                <span
+                  className="flex items-center gap-2 bg-orange-700 hover:bg-orange-700 text-white px-4 py-3 rounded-xl font-semibold shadow-lg shadow-red-600/20 hover:shadow-red-600/30 transition-all transform hover:-translate-y-0.5"
+                  title="Logout"
+                >
+                  <LogOut size={20} />
+                </span>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Logout</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to logout?
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="flex items-center justify-center" >
+                  <DialogClose className="w-[120px]">
+                    <span
+                      className="flex items-center gap-2 border-orange-700 border text-orange-700 px-4 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5"
+                    >
+                      Cancel
+                    </span>
+                  </DialogClose>
+                  <DialogClose className="w-[120px]">
+                    <span
+                      onClick={logout}
+                      className="flex items-center gap-2 bg-orange-700 hover:bg-orange-700 text-white px-4 py-3 rounded-xl font-semibold shadow-lg transition-all transform hover:-translate-y-0.5"
+                      title="Logout"
+                    >
+                      <LogOut size={20} />
+                      Logout
+                    </span>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </header>
 
