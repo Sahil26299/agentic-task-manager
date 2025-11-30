@@ -14,6 +14,7 @@ const createTaskSchema = z.object({
 import { verifyToken } from "@/lib/auth";
 import User from "@/models/User";
 import { sendWhatsAppMessage } from "../whatsapp-incoming/functions";
+import { generateUrlSlug } from "@/src/utilities";
 
 export async function GET(request: Request) {
   try {
@@ -72,10 +73,15 @@ export async function POST(request: Request) {
     };
 
     const task = await Task.create(taskData);
-    console.log(task,'task');
-    const user = await User.findOne({ _id: decoded.userId })
-    console.log(user,'user');
-    sendWhatsAppMessage(user.phone, `New task created: ${task.title}`);
+    const user = await User.findOne({ _id: decoded.userId });
+    sendWhatsAppMessage(
+      `${user?.countryCode}${user?.phone}`,
+      `New task created successfully: ${
+        task.title
+      }.\nYou can access it on https://agentic-task-manager.vercel.app/dashboard/${generateUrlSlug(
+        task.title
+      )}/${task._id}`
+    );
     return NextResponse.json(task, { status: 201 });
   } catch (error) {
     if (error instanceof ZodError) {

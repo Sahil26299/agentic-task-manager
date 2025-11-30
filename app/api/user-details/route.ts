@@ -6,6 +6,7 @@ import User from "@/models/User";
 
 const updateUserSchema = z.object({
   phone: z.string().optional(),
+  countryCode: z.string().optional(),
   oldPassword: z.string().optional(),
   newPassword: z.string().optional(),
 });

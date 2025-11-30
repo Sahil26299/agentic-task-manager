@@ -12,8 +12,14 @@ const updateTaskSchema = z.object({
 });
 
 import { verifyToken } from "@/lib/auth";
+import User from "@/models/User";
+import { sendWhatsAppMessage } from "../../whatsapp-incoming/functions";
+import { generateUrlSlug } from "@/src/utilities";
 
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await dbConnect();
 
@@ -31,7 +37,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     const { id } = await params;
 
-    const tasks = await Task.findOne({ $and: [{ userId: decoded.userId }, { _id: id }] });
+    const tasks = await Task.findOne({
+      $and: [{ userId: decoded.userId }, { _id: id }],
+    });
     return NextResponse.json(tasks);
   } catch (error) {
     console.log(error, "error");
@@ -76,6 +84,15 @@ export async function PUT(
         { status: 404 }
       );
     }
+    // const user = await User.findOne({ _id: decoded.userId });
+    // sendWhatsAppMessage(
+    //   `${user?.countryCode}${user?.phone}`,
+    //   `Task updated successfully: ${
+    //     task.title
+    //   }.\nYou can access it on https://agentic-task-manager.vercel.app/dashboard/${generateUrlSlug(
+    //     task.title
+    //   )}/${task._id}`
+    // );
     return NextResponse.json(task);
   } catch (error) {
     if (error instanceof ZodError) {

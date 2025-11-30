@@ -51,6 +51,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 export default function Home({ params }: any) {
   const [tasks, setTasks] = useState<ITask[]>([]);
@@ -62,7 +63,12 @@ export default function Home({ params }: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
-  const [userDetails, setUserDetails] = useState<any>({phone: "", oldPassword: "", newPassword: ""})
+  const [userDetails, setUserDetails] = useState<any>({
+    phone: "",
+    oldPassword: "",
+    newPassword: "",
+    submittingDetails: false,
+  });
   const {
     token,
     logout,
@@ -291,12 +297,15 @@ export default function Home({ params }: any) {
     window.history.pushState({ taskId: task._id }, "", newPath);
   };
 
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     console.log("Form submitted");
     try {
       if (!token) return;
-      let data:any = {};
-      if (userDetails.phone) data.phone = userDetails.phone;
+      let data: any = {};
+      if (userDetails.phone) {
+        data.phone = userDetails.phone;
+        data.countryCode = "+91";
+      }
       if (userDetails.oldPassword) data.oldPassword = userDetails.oldPassword;
       if (userDetails.newPassword) data.newPassword = userDetails.newPassword;
       const res = await fetch(`${API_BASE_URL}${endpoints.USER_DETAILS}`, {
@@ -307,10 +316,13 @@ export default function Home({ params }: any) {
         },
         body: JSON.stringify(data),
       });
+      if (res.ok) {
+        setIsProfileOpen(false);
+      }
     } catch (error) {
       console.error("Failed to create task:", error);
     }
-  }
+  };
 
   const isUrgent = (task: ITask | null) => {
     if (!task) return false;
@@ -336,9 +348,9 @@ export default function Home({ params }: any) {
           <div className="w-2/3">
             <Link
               href="/dashboard"
-              className="lg:text-4xl md:text-3xl text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight"
+              className="lg:text-4xl md:text-3xl text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-2"
             >
-              📋 My Tasks
+              <Image src="./images/appLogo.svg" alt="App Logo" width={60} height={60} /> My Tasks
             </Link>
             <p className="text-gray-500 dark:text-gray-400 mt-2 lg:text-lg text-sm">
               Welcome, {user?.name}! Manage your notes and tasks efficiently. 🎯
@@ -424,8 +436,8 @@ export default function Home({ params }: any) {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen} >
-              <DialogContent >
+            <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+              <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Edit profile (🚧 Under development)</DialogTitle>
                   <DialogDescription>
@@ -460,18 +472,32 @@ export default function Home({ params }: any) {
                     <Label htmlFor="phone" className="text-right text-gray-300">
                       What's app number
                     </Label>
-                    <Input
-                      id="phone"
-                      placeholder="Optional"
-                      defaultValue={user?.phone}
-                      type="number"
-                      onChange={(ev)=>setUserDetails({...userDetails, phone: ev.target.value})}
-                      className="col-span-3"
-                    />
+                    <div className="col-span-3 flex items-center gap-2">
+                      <span className="text-gray-400">+91</span>
+                      <Input
+                        id="phone"
+                        placeholder="Eg. 9876543210 (Optional)"
+                        defaultValue={user?.phone}
+                        type="number"
+                        onChange={(ev) =>
+                          setUserDetails({
+                            ...userDetails,
+                            phone: ev.target.value,
+                          })
+                        }
+                      />
+                    </div>
                   </div>
-                  <span className="text-[12px] text-gray-300" ><i>For recieving updates on what's app. we recommend to add your what's app number</i></span>
+                  <span className="text-[12px] text-gray-300">
+                    <i>
+                      For recieving updates on what's app. we recommend to add
+                      your what's app number
+                    </i>
+                  </span>
                   <Separator className="my-4" />
-                  <h4 className="text-base md:text-lg font-semibold">Change Password 🚧</h4>
+                  <h4 className="text-base md:text-lg font-semibold">
+                    Change Password 🚧
+                  </h4>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="old-password" className="text-right">
                       Old Password
@@ -480,7 +506,12 @@ export default function Home({ params }: any) {
                       id="old-password"
                       disabled
                       type="password"
-                      onChange={(ev)=>setUserDetails({...userDetails, oldPassword: ev.target.value})}
+                      onChange={(ev) =>
+                        setUserDetails({
+                          ...userDetails,
+                          oldPassword: ev.target.value,
+                        })
+                      }
                       className="col-span-3"
                     />
                   </div>
@@ -492,7 +523,12 @@ export default function Home({ params }: any) {
                       disabled
                       id="new-password"
                       type="password"
-                      onChange={(ev)=>setUserDetails({...userDetails, newPassword: ev.target.value})}
+                      onChange={(ev) =>
+                        setUserDetails({
+                          ...userDetails,
+                          newPassword: ev.target.value,
+                        })
+                      }
                       className="col-span-3"
                     />
                   </div>
@@ -501,8 +537,16 @@ export default function Home({ params }: any) {
                   <DialogClose asChild>
                     <Button variant="outline">Cancel</Button>
                   </DialogClose>
-                  <Button type="button" onClick={handleSubmit}>
-                    Save changes
+                  <Button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={userDetails.submittingDetails}
+                  >
+                    {userDetails.submittingDetails ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      "Save changes"
+                    )}
                   </Button>
                 </DialogFooter>
               </DialogContent>
