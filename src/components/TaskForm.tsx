@@ -140,7 +140,6 @@ const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
                     endMonth={new Date(2030, 0)}
                     captionLayout="dropdown"
                     onSelect={(value) => {
-                      console.log(value, "value");
                       if (value) {
                         setDate(dayjs(new Date(value)).format("MM/DD/YYYY"));
                         setOpenDatePopover(false);

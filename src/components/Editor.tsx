@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
+
 import {
   Bold,
   Italic,
@@ -12,6 +14,8 @@ import {
   ListOrdered,
   Heading1,
   Heading2,
+  Link as LinkIcon,
+  Strikethrough,
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -28,7 +32,15 @@ interface EditorProps {
 
 const Editor = ({ content, onChange, editable = true }: EditorProps) => {
   const editor = useEditor({
-    extensions: [StarterKit, Underline],
+    extensions: [
+      StarterKit,
+      Underline,
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        defaultProtocol: "https",
+      }),
+    ],
     content,
     editable,
     onUpdate: ({ editor }) => {
@@ -37,7 +49,7 @@ const Editor = ({ content, onChange, editable = true }: EditorProps) => {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm dark:prose-invert focus:outline-none max-w-none p-2 text-[15px] leading-[1.5] font-inter [&_*]:text-slate-300 [&_strong]:text-slate-100 [&_p]:my-1 [&_h1]:my-1 [&_h2]:my-1 [&_ul]:my-1 [&_ol]:my-1",
+          "prose prose-sm dark:prose-invert focus:outline-none max-w-none p-2 text-[15px] leading-[1.5] font-inter [&_*]:text-slate-300 [&_strong]:text-slate-100 [&_p]:my-1 [&_h1]:my-1 [&_h2]:my-1 [&_ul]:my-1 [&_ol]:my-1 [&_a]:text-blue-400 [&_a]:underline [&_a]:cursor-pointer",
       },
     },
     immediatelyRender: false,
@@ -52,6 +64,25 @@ const Editor = ({ content, onChange, editable = true }: EditorProps) => {
   if (!editor) {
     return null;
   }
+
+  const setLink = () => {
+    const previousUrl = editor.getAttributes("link").href;
+    const url = window.prompt("URL", previousUrl);
+
+    // cancelled
+    if (url === null) {
+      return;
+    }
+
+    // empty
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      return;
+    }
+
+    // update
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  };
 
   return (
     <div className="border rounded-lg overflow-hidden border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
@@ -95,7 +126,38 @@ const Editor = ({ content, onChange, editable = true }: EditorProps) => {
         >
           <UnderlineIcon size={18} />
         </button>
+        <button
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+          className={cn(
+            "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+            editor.isActive("strike")
+              ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
+              : "text-gray-600 dark:text-gray-300"
+          )}
+          type="button"
+          title="Strike"
+        >
+          <Strikethrough size={18} />
+        </button>
+
         <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1 self-center" />
+
+        <button
+          onClick={setLink}
+          className={cn(
+            "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+            editor.isActive("link")
+              ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
+              : "text-gray-600 dark:text-gray-300"
+          )}
+          type="button"
+          title="Link"
+        >
+          <LinkIcon size={18} />
+        </button>
+
+        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1 self-center" />
+
         <button
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
