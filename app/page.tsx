@@ -91,7 +91,7 @@ export default function LandingPage() {
         <div id="features" className="max-w-7xl mx-auto px-6 py-20">
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 hover:border-blue-500/50 transition-all group">
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:-rotate-12 group-hover:scale-110 transition-transform">
                 <CheckCircle
                   className="text-blue-600 dark:text-blue-400"
                   size={24}
@@ -107,7 +107,7 @@ export default function LandingPage() {
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 hover:border-green-500/50 transition-all group">
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:-rotate-12 group-hover:scale-110 transition-transform">
                 <MessageCircle
                   className="text-green-600 dark:text-green-400"
                   size={24}
@@ -123,7 +123,7 @@ export default function LandingPage() {
             </div>
 
             <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 hover:border-purple-500/50 transition-all group">
-              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:-rotate-12 transition-transform">
                 <Shield
                   className="text-purple-600 dark:text-purple-400"
                   size={24}
