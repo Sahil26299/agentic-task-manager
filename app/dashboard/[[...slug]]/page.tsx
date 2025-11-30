@@ -8,6 +8,8 @@ import {
   UserRoundCog,
   Headset,
   User,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import TaskCard from "@/src/components/TaskCard";
 import TaskForm from "@/src/components/TaskForm";
@@ -63,12 +65,15 @@ export default function Home({ params }: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [userDetails, setUserDetails] = useState<any>({
     phone: "",
     oldPassword: "",
     newPassword: "",
     submittingDetails: false,
   });
+  const [updateProfileError, setUpdateProfileError] = useState("");
+
   const {
     token,
     logout,
@@ -236,7 +241,6 @@ export default function Home({ params }: any) {
 
   const handleDeleteTask = async (id: string) => {
     if (!token) return;
-    if (!confirm("Are you sure you want to delete this task?")) return;
     try {
       const res = await fetch(`${API_BASE_URL}${endpoints.TASKS}/${id}`, {
         method: "DELETE",
@@ -299,6 +303,11 @@ export default function Home({ params }: any) {
 
   const handleSubmit = async () => {
     console.log("Form submitted");
+    setUpdateProfileError("");
+    setUserDetails((prev: any) => ({
+      ...prev,
+      submittingDetails: true
+    }))
     try {
       if (!token) return;
       let data: any = {};
@@ -307,7 +316,7 @@ export default function Home({ params }: any) {
         data.countryCode = "+91";
       }
       if (userDetails.oldPassword) data.oldPassword = userDetails.oldPassword;
-      if (userDetails.newPassword) data.newPassword = userDetails.newPassword;
+      if (userDetails.newPassword) data.password = userDetails.newPassword;
       const res = await fetch(`${API_BASE_URL}${endpoints.USER_DETAILS}`, {
         method: "PATCH",
         headers: {
@@ -316,11 +325,25 @@ export default function Home({ params }: any) {
         },
         body: JSON.stringify(data),
       });
+      
       if (res.ok) {
         setIsProfileOpen(false);
+      }else {
+        const data = await res.json();
+        throw new Error(data?.error || "Failed to update profile details");
       }
-    } catch (error) {
-      console.error("Failed to create task:", error);
+    } catch (error: any) {
+      setUpdateProfileError(
+        error?.message || "Failed to update profile details"
+      );
+    }
+    finally {
+      setUserDetails((prev: any) => ({
+        ...prev,
+        submittingDetails: false,
+        oldPassword: "",
+        newPassword: "",
+      }))
     }
   };
 
@@ -350,7 +373,13 @@ export default function Home({ params }: any) {
               href="/dashboard"
               className="lg:text-4xl md:text-3xl text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-2"
             >
-              <Image src="./images/appLogo.svg" alt="App Logo" width={60} height={60} /> My Tasks
+              <Image
+                src="./images/appLogo.svg"
+                alt="App Logo"
+                width={60}
+                height={60}
+              />{" "}
+              My Tasks
             </Link>
             <p className="text-gray-500 dark:text-gray-400 mt-2 lg:text-lg text-sm">
               Welcome, {user?.name}! Manage your notes and tasks efficiently. 🎯
@@ -437,7 +466,7 @@ export default function Home({ params }: any) {
             </DropdownMenu>
 
             <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-              <DialogContent>
+              <DialogContent className="max-w-4xl min-w-2/5">
                 <DialogHeader>
                   <DialogTitle>Edit profile (🚧 Under development)</DialogTitle>
                   <DialogDescription>
@@ -448,7 +477,7 @@ export default function Home({ params }: any) {
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="name" className="text-right text-gray-300">
-                      Name 🚧
+                      Name
                     </Label>
                     <Input
                       id="name"
@@ -459,7 +488,7 @@ export default function Home({ params }: any) {
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="email" className="text-right text-gray-300">
-                      Email 🚧
+                      Email
                     </Label>
                     <Input
                       id="email"
@@ -473,7 +502,7 @@ export default function Home({ params }: any) {
                       What's app number
                     </Label>
                     <div className="col-span-3 flex items-center gap-2">
-                      <span className="text-gray-400">+91</span>
+                      <span className="text-white text-sm">+91</span>
                       <Input
                         id="phone"
                         placeholder="Eg. 9876543210 (Optional)"
@@ -495,8 +524,16 @@ export default function Home({ params }: any) {
                     </i>
                   </span>
                   <Separator className="my-4" />
-                  <h4 className="text-base md:text-lg font-semibold">
-                    Change Password 🚧
+                  <h4 className="text-base md:text-lg font-semibold flex items-center gap-2">
+                    Change Password{" "}
+                    <Button
+                      size={"icon-sm"}
+                      variant={"ghost"}
+                      className="bg-none"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <Eye /> : <EyeOff />}
+                    </Button>
                   </h4>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="old-password" className="text-right">
@@ -504,14 +541,14 @@ export default function Home({ params }: any) {
                     </Label>
                     <Input
                       id="old-password"
-                      disabled
-                      type="password"
-                      onChange={(ev) =>
+                      type={showPassword ? "text" : "password"}
+                      onChange={(ev) =>{
+                        setUpdateProfileError("");
                         setUserDetails({
                           ...userDetails,
                           oldPassword: ev.target.value,
                         })
-                      }
+                      }}
                       className="col-span-3"
                     />
                   </div>
@@ -520,19 +557,24 @@ export default function Home({ params }: any) {
                       New Password
                     </Label>
                     <Input
-                      disabled
                       id="new-password"
-                      type="password"
-                      onChange={(ev) =>
+                      type={showPassword ? "text" : "password"}
+                      onChange={(ev) =>{
+                        setUpdateProfileError("");
                         setUserDetails({
                           ...userDetails,
                           newPassword: ev.target.value,
                         })
-                      }
+                      }}
                       className="col-span-3"
                     />
                   </div>
                 </div>
+                {updateProfileError && (
+                  <div className="p-3 text-sm text-red-500 bg-red-100 rounded-md dark:bg-red-900/30">
+                    {updateProfileError}
+                  </div>
+                )}
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button variant="outline">Cancel</Button>

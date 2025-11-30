@@ -5,6 +5,17 @@ import dayjs from "dayjs";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { sup } from "framer-motion/client";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 interface TaskCardProps {
   task: ITask;
@@ -86,21 +97,39 @@ const TaskCard = ({
               e.stopPropagation();
               onEdit(task);
             }}
-            className="cursor-pointer p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
+            className="h-8 w-8 flex flex-col items-center justify-center cursor-pointer text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
             title="Edit"
           >
             <Edit size={16} />
           </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(task?._id as unknown as string);
-            }}
-            className="cursor-pointer p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
-            title="Delete"
-          >
-            <Trash2 size={16} />
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger
+              title="Delete"
+              onClick={(e)=>e.stopPropagation()}
+              className="h-8 w-8 flex flex-col items-center justify-center cursor-pointer text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
+            >
+              <Trash2 size={16} />
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete task</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete this task?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={(e)=>e.stopPropagation()} >Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(task?._id as unknown as string);
+                  }}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
