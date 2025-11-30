@@ -14,13 +14,13 @@ export async function POST(request: Request) {
     // 1. Extract Fields using AI
     let extractedData;
     try {
-      extractedData = await extractTaskDetails(incomingMessage as string);
+      extractedData = await extractTaskDetails(incomingMessage as string, from as string);
       console.log("Extracted Data:", extractedData);
-    } catch (error) {
-      console.error("Extraction failed:", error);
+    } catch (error:any) {
+      console.error("Extraction failed:", error?.message);
       await sendWhatsAppMessage(
         from as string,
-        "Sorry, I couldn't understand the task details. Please provide title and body to start creating your tasks."
+        error?.message || "Sorry, I couldn't understand the task details. Please provide title and body to start creating your tasks."
       );
       return NextResponse.json(
         "Sorry, I couldn't understand the details provided.",
@@ -51,8 +51,9 @@ export async function POST(request: Request) {
           reminder: extractedData.reminder
             ? new Date(extractedData.reminder)
             : undefined,
-          tags: extractedData.tags || [],
+          tags: extractedData?.tags || [],
           isCompleted: extractedData.isCompleted ?? false,
+          userId: extractedData?.userId,
         };
         taskResponse = await Task.create(taskData);
         console.log(taskResponse, "taskResponse");
