@@ -6,6 +6,8 @@ import {
   setSessionStorageItem,
 } from "./storage/sessionStorageUtils";
 import { endpoints, API_BASE_URL } from "./api/apiConfig";
+import { generateUrlSlug, parseSlug } from "./helper/helperFunctions";
+import { UserInterface, AuthContextType } from "./commonInterfaces/interfaces";
 
 export {
   getSessionStorageItem,
@@ -15,5 +17,7 @@ export {
   poppins,
   inter,
   endpoints,
-  API_BASE_URL
+  API_BASE_URL, generateUrlSlug, parseSlug
 };
+
+export type {UserInterface, AuthContextType}

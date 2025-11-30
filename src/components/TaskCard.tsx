@@ -80,7 +80,7 @@ const TaskCard = ({
           {dayjs(task.createdAt).format("DD MMM, YYYY")}
         </span>
 
-        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={(e) => {
               e.stopPropagation();

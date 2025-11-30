@@ -1,9 +1,13 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import { Schema, model, models } from "mongoose";
 
 const UserSchema = new Schema({
   name: {
     type: String,
     required: [true, "Name is required"],
+  },
+  phone: {
+    type: String,
+    required: [false],
   },
   email: {
     type: String,

@@ -12,6 +12,8 @@ const createTaskSchema = z.object({
 });
 
 import { verifyToken } from "@/lib/auth";
+import User from "@/models/User";
+import { sendWhatsAppMessage } from "../whatsapp-incoming/functions";
 
 export async function GET(request: Request) {
   try {
@@ -70,6 +72,10 @@ export async function POST(request: Request) {
     };
 
     const task = await Task.create(taskData);
+    console.log(task,'task');
+    const user = await User.findOne({ _id: decoded.userId })
+    console.log(user,'user');
+    sendWhatsAppMessage(user.phone, `New task created: ${task.title}`);
     return NextResponse.json(task, { status: 201 });
   } catch (error) {
     if (error instanceof ZodError) {

@@ -1,5 +1,6 @@
 export const endpoints = {
   TASKS: "/tasks",
+  USER_DETAILS: "/user-details",
   AUTH_LOGIN: "/auth/login",
   AUTH_SIGNUP: "/auth/signup",
 };

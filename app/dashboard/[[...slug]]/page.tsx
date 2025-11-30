@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Plus,
   Loader2,
@@ -16,8 +16,8 @@ import { ITask } from "@/models/Task";
 import dayjs from "dayjs";
 import WhatsAppBanner from "@/src/components/WhatsAppBanner";
 import { useAuth } from "@/components/AuthProvider";
-import { useRouter } from "next/navigation";
-import { API_BASE_URL, endpoints } from "@/src/utilities";
+import { useRouter, useParams } from "next/navigation";
+import { API_BASE_URL, endpoints, generateUrlSlug } from "@/src/utilities";
 import Link from "next/link";
 import {
   Dialog,
@@ -50,8 +50,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
-export default function Home() {
+export default function Home({ params }: any) {
   const [tasks, setTasks] = useState<ITask[]>([]);
   const [loading, setLoading] = useState(true);
   const [taskEditing, setTaskEditing] = useState<null | any>(null);
@@ -61,6 +62,7 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  const [userDetails, setUserDetails] = useState<any>({phone: "", oldPassword: "", newPassword: ""})
   const {
     token,
     logout,
@@ -69,13 +71,59 @@ export default function Home() {
     loading: authLoading,
   } = useAuth();
   const router = useRouter();
-  console.log(user, "user");
+  const { slug } = useParams();
+  const processedSlugRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       router.push("/login");
     }
   }, [isAuthenticated, authLoading, router]);
+
+  useEffect(() => {
+    const slugKey = Array.isArray(slug) ? slug.join("/") : slug || null;
+    if (
+      slug &&
+      tasks.length > 0 &&
+      !loading &&
+      slugKey !== processedSlugRef.current
+    ) {
+      fetchSingleTask(slug[1]);
+      processedSlugRef.current = slugKey;
+    } else if (!slug) {
+      // Ensure modal is closed if no slug (and not just opened by user interaction which might not have updated URL yet if we do it async, but here we want to sync on load/back)
+      setIsModalOpen(false);
+      setSelectedTask(null);
+      processedSlugRef.current = null;
+    }
+  }, [slug, tasks, loading]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      // This handles browser back/forward buttons
+      // The router.push/replace might not trigger this in all Next.js versions effectively for shallow routing without some setup,
+      // but window.history.pushState does not trigger popstate.
+      // popstate is triggered by back/forward actions.
+
+      // We can rely on the Next.js router to update the params.slug, which triggers the effect above.
+      // However, for purely client-side shallow updates that don't trigger a full navigation, we might need to listen to URL changes if we were not using Next.js router.
+      // Since we are using window.history.pushState manually for the modal open/close to avoid re-render/fetch,
+      // we need to handle the back button to close the modal if it was opened via pushState.
+
+      // Actually, if we use window.history.pushState, the URL changes but Next.js might not know about it immediately to update `params`.
+      // But if the user presses Back, the browser restores the previous URL.
+      // If that previous URL was the dashboard root, we want to close the modal.
+
+      const currentPath = window.location.pathname;
+      if (currentPath === "/dashboard") {
+        setIsModalOpen(false);
+        setSelectedTask(null);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   const fetchTasks = async () => {
     if (!token) return;
@@ -88,6 +136,29 @@ export default function Home() {
       if (res.ok) {
         const data = await res.json();
         setTasks(data);
+      } else if (res.status === 401) {
+        logout();
+      }
+    } catch (error) {
+      console.error("Failed to fetch tasks:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSingleTask = async (id: string) => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}${endpoints.TASKS}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        console.log(data);
+        setIsModalOpen(true);
+        setSelectedTask(data);
       } else if (res.status === 401) {
         logout();
       }
@@ -213,7 +284,33 @@ export default function Home() {
   const openTaskModal = (task: ITask) => {
     setSelectedTask(task);
     setIsModalOpen(true);
+    const newPath = `/dashboard/${generateUrlSlug(
+      task.title,
+      task?._id as any
+    )}`;
+    window.history.pushState({ taskId: task._id }, "", newPath);
   };
+
+  const handleSubmit = async() => {
+    console.log("Form submitted");
+    try {
+      if (!token) return;
+      let data:any = {};
+      if (userDetails.phone) data.phone = userDetails.phone;
+      if (userDetails.oldPassword) data.oldPassword = userDetails.oldPassword;
+      if (userDetails.newPassword) data.newPassword = userDetails.newPassword;
+      const res = await fetch(`${API_BASE_URL}${endpoints.USER_DETAILS}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+    } catch (error) {
+      console.error("Failed to create task:", error);
+    }
+  }
 
   const isUrgent = (task: ITask | null) => {
     if (!task) return false;
@@ -235,22 +332,22 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 sm:p-10 font-sans relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
-        <header className="flex justify-between items-center mb-10 border-b-2 border-slate-800 pb-4">
+        <header className="flex justify-between mb-10 border-b-2 border-slate-800 pb-4">
           <div className="w-2/3">
             <Link
               href="/dashboard"
-              className="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight"
+              className="lg:text-4xl md:text-3xl text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight"
             >
               📋 My Tasks
             </Link>
-            <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">
+            <p className="text-gray-500 dark:text-gray-400 mt-2 lg:text-lg text-sm">
               Welcome, {user?.name}! Manage your notes and tasks efficiently. 🎯
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex md:items-center items-start gap-4">
             <button
               onClick={openCreateModal}
-              className="h-[45px] flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white md:px-6 px-4 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 transition-all transform hover:-translate-y-0.5"
+              className="md:h-[45px] h-[40px] flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white md:px-6 px-3 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 transition-all transform hover:-translate-y-0.5"
             >
               <Plus size={20} />
               <span className="md:flex hidden">New Task</span>
@@ -259,7 +356,7 @@ export default function Home() {
               <DropdownMenuTrigger asChild>
                 <Button
                   size={"icon"}
-                  className="ring-0 border-none outline-none h-[45px] flex items-center gap-2 bg-orange-700 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-red-600/20 hover:shadow-red-600/30 transition-all transform hover:-translate-y-0.5"
+                  className="ring-0 border-none outline-none md:h-[45px] h-[40px] flex items-center gap-2 bg-orange-700 hover:bg-orange-700 text-white md:px-6 px-5 py-3 rounded-xl font-semibold shadow-lg shadow-red-600/20 hover:shadow-red-600/30 transition-all transform hover:-translate-y-0.5"
                 >
                   <UserRoundCog size={24} />
                 </Button>
@@ -327,8 +424,8 @@ export default function Home() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-              <DialogContent>
+            <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen} >
+              <DialogContent >
                 <DialogHeader>
                   <DialogTitle>Edit profile (🚧 Under development)</DialogTitle>
                   <DialogDescription>
@@ -338,8 +435,8 @@ export default function Home() {
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="name" className="text-right">
-                      Name
+                    <Label htmlFor="name" className="text-right text-gray-300">
+                      Name 🚧
                     </Label>
                     <Input
                       id="name"
@@ -349,8 +446,8 @@ export default function Home() {
                     />
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="email" className="text-right">
-                      Email
+                    <Label htmlFor="email" className="text-right text-gray-300">
+                      Email 🚧
                     </Label>
                     <Input
                       id="email"
@@ -359,6 +456,22 @@ export default function Home() {
                       className="col-span-3"
                     />
                   </div>
+                  <div className="relative grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="phone" className="text-right text-gray-300">
+                      What's app number
+                    </Label>
+                    <Input
+                      id="phone"
+                      placeholder="Optional"
+                      defaultValue={user?.phone}
+                      type="number"
+                      onChange={(ev)=>setUserDetails({...userDetails, phone: ev.target.value})}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <span className="text-[12px] text-gray-300" ><i>For recieving updates on what's app. we recommend to add your what's app number</i></span>
+                  <Separator className="my-4" />
+                  <h4 className="text-base md:text-lg font-semibold">Change Password 🚧</h4>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="old-password" className="text-right">
                       Old Password
@@ -367,6 +480,7 @@ export default function Home() {
                       id="old-password"
                       disabled
                       type="password"
+                      onChange={(ev)=>setUserDetails({...userDetails, oldPassword: ev.target.value})}
                       className="col-span-3"
                     />
                   </div>
@@ -378,6 +492,7 @@ export default function Home() {
                       disabled
                       id="new-password"
                       type="password"
+                      onChange={(ev)=>setUserDetails({...userDetails, newPassword: ev.target.value})}
                       className="col-span-3"
                     />
                   </div>
@@ -386,7 +501,9 @@ export default function Home() {
                   <DialogClose asChild>
                     <Button variant="outline">Cancel</Button>
                   </DialogClose>
-                  <Button disabled type="submit">Save changes</Button>
+                  <Button type="button" onClick={handleSubmit}>
+                    Save changes
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -472,7 +589,10 @@ export default function Home() {
           task={selectedTask}
           isUrgent={isUrgent(selectedTask)}
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            window.history.pushState({}, "", "/dashboard");
+          }}
         />
       </div>
     </main>

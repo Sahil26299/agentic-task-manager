@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 export default function LandingPage() {
   return (
@@ -23,7 +24,7 @@ export default function LandingPage() {
           href="/"
           className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2"
         >
-          <span>📋</span> TaskManager
+          <Image src="/images/appLogo.svg" alt="application logo" height={45} width={45} /> TaskManager
         </Link>
         <div className="hidden sm:flex gap-4">
           <Link

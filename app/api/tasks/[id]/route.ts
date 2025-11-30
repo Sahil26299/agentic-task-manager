@@ -13,6 +13,35 @@ const updateTaskSchema = z.object({
 
 import { verifyToken } from "@/lib/auth";
 
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    await dbConnect();
+
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = verifyToken(token);
+
+    if (!decoded || typeof decoded !== "object" || !decoded.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await params;
+
+    const tasks = await Task.findOne({ $and: [{ userId: decoded.userId }, { _id: id }] });
+    return NextResponse.json(tasks);
+  } catch (error) {
+    console.log(error, "error");
+    return NextResponse.json(
+      { error: "Failed to fetch tasks" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
