@@ -1,6 +1,6 @@
-<p align="center">
+<a align="center" href="https://agentic-task-manager.vercel.app/" target="_blank" >
   <img src="https://agentic-task-manager.vercel.app/images/appImage.png" width="100%" alt="Task Manager Hero" />
-</p>
+</a>
 
 # 📝 Task Manager – App + WhatsApp Powered Productivity Tool
 
