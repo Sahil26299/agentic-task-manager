@@ -7,6 +7,8 @@
 **Task Manager** is a modern, lightweight productivity application built with **Next.js**, allowing users to **create, update, and organize tasks or notes from the web app or directly through WhatsApp**.  
 It is designed for simplicity, speed, and seamless accessibility—whether you're on desktop, mobile, or on the go via WhatsApp.
 
+Live Website: **https://agentic-task-manager.vercel.app**
+
 ---
 
 ## 🚀 Features
