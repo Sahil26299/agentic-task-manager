@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     // Ideal OG image size: 1200×630
     images: [
       {
-        url: "https://agentic-task-manager.vercel.app/images/appLogo.png",
+        url: "https://agentic-task-manager.vercel.app/images/appImage.png",
         width: 1200,
         height: 630,
         alt: "Task Manager Logo",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     title: "Task Manager",
     description:
       "Create, update, and manage all your tasks and notes effortlessly through the application or directly from WhatsApp.",
-    images: ["https://agentic-task-manager.vercel.app/images/appLogo.png"],
+    images: ["https://agentic-task-manager.vercel.app/images/appImage.png", "https://agentic-task-manager.vercel.app/images/appLogo.png"],
   },
 };
 
