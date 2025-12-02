@@ -519,7 +519,7 @@ export default function Home({ params }: any) {
                   </div>
                   <span className="text-[12px] text-gray-300">
                     <i>
-                      For recieving updates on what's app, we recommend to add
+                      For receiving updates on what's app, we recommend to add
                       your what's app number
                     </i>
                   </span>
