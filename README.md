@@ -72,54 +72,18 @@ Live Website: **https://agentic-task-manager.vercel.app**
 
 1. User sends a message to WhatsApp bot  
 2. Twilio forwards message to your Next.js webhook  
-3. Backend extracts title, body, tags, reminder  
+3. Backend extracts title, body, tags, reminder using OpenAI GPT-4o mini llm model
 4. Task is created in MongoDB  
 5. Bot sends confirmation message  
 6. Task appears in UI instantly  
 
 ---
 
-## 🛠️ Local Setup Guide
-
-### 1️⃣ Clone the Repo
-```bash
-git clone <repository-url>
-cd task-manager
-```
-
-### 2️⃣ Install Dependencies
-```bash
-npm install
-```
-
-### 3️⃣ Environment Variables
-```bash
-MONGODB_URI=your_mongodb_connection
-TWILIO_ACCOUNT_SID=xxxx
-TWILIO_AUTH_TOKEN=xxxx
-TWILIO_WHATSAPP_NUMBER=+1415xxxxxx
-APP_URL=http://localhost:3000
-```
-
-### 4️⃣ Start Development Server
-```bash
-npm run dev
-```
-
-### App runs on:
-➡️ http://localhost:3000
-
 ### 📄 License
 Licensed under MIT License.
 
 ### ⭐ Support
 If this project helps you, please give it a star ⭐ on GitHub!
-
-If you want, I can also:  
-✅ Add shields badges (Next.js, TypeScript, MongoDB, Vercel, Twilio, License, etc.)  
-✅ Generate a compact version  
-✅ Add a GIF demo  
-Just tell me!
 
 ## 🤝Connect me on:
 [![email](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white)](mailto:sahillokhande94@gmail.com) [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/sahillokhande26) [![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://instagram.com/sahil_lokhande26) [![X](https://img.shields.io/badge/X-black.svg?logo=X&logoColor=white)](https://x.com/sahillokhande26)
