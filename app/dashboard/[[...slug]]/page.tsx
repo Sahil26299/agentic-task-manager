@@ -468,7 +468,7 @@ export default function Home({ params }: any) {
             <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
               <DialogContent className="max-w-4xl min-w-2/5">
                 <DialogHeader>
-                  <DialogTitle>Edit profile (🚧 Under development)</DialogTitle>
+                  <DialogTitle>Edit profile</DialogTitle>
                   <DialogDescription>
                     Make changes to your profile here. Click save when
                     you&apos;re done.
@@ -519,7 +519,7 @@ export default function Home({ params }: any) {
                   </div>
                   <span className="text-[12px] text-gray-300">
                     <i>
-                      For recieving updates on what's app. we recommend to add
+                      For recieving updates on what's app, we recommend to add
                       your what's app number
                     </i>
                   </span>
