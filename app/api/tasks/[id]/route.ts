@@ -12,9 +12,6 @@ const updateTaskSchema = z.object({
 });
 
 import { verifyToken } from "@/lib/auth";
-import User from "@/models/User";
-import { sendWhatsAppMessage } from "../../whatsapp-incoming/functions";
-import { generateUrlSlug } from "@/src/utilities";
 
 export async function GET(
   request: Request,

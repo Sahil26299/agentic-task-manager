@@ -138,6 +138,7 @@ export default function Home({ params }: any) {
 
   const fetchTasks = async () => {
     if (!token) return;
+    setLoading(true)
     try {
       const res = await fetch(`${API_BASE_URL}${endpoints.TASKS}`, {
         headers: {
@@ -159,6 +160,7 @@ export default function Home({ params }: any) {
 
   const fetchSingleTask = async (id: string) => {
     if (!token) return;
+    setLoading(true)
     try {
       const res = await fetch(`${API_BASE_URL}${endpoints.TASKS}/${id}`, {
         headers: {
@@ -241,6 +243,7 @@ export default function Home({ params }: any) {
 
   const handleDeleteTask = async (id: string) => {
     if (!token) return;
+    setLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}${endpoints.TASKS}/${id}`, {
         method: "DELETE",
@@ -253,6 +256,8 @@ export default function Home({ params }: any) {
       }
     } catch (error) {
       console.error("Failed to delete task:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -612,8 +617,28 @@ export default function Home({ params }: any) {
         </header>
 
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <Loader2 className="animate-spin text-blue-600" size={40} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {/* <Loader2 className="animate-spin text-blue-600" size={40} /> */}
+            <div className="flex flex-col gap-4 p-4 h-64 w-76 bg-gray-800 animate-pulse rounded-lg" >
+              <div className="h-5 w-full rounded-md animate-pulse bg-gray-600 delay-75" />
+              <div className="flex-1 w-full rounded-md animate-pulse bg-gray-600 delay-150" />
+              <div className="h-5 w-1/2 rounded-md animate-pulse bg-gray-600 delay-225" />
+            </div>
+            <div className="flex-col gap-4 p-4 h-64 w-76 bg-gray-800 animate-pulse rounded-lg sm:flex hidden" >
+              <div className="h-5 w-full rounded-md animate-pulse bg-gray-600 delay-300" />
+              <div className="flex-1 w-full rounded-md animate-pulse bg-gray-600 delay-450" />
+              <div className="h-5 w-1/2  rounded-md animate-pulse bg-gray-600 delay-600" />
+            </div>
+            <div className="flex-col gap-4 p-4 h-64 w-76 bg-gray-800 animate-pulse rounded-lg lg:flex hidden" >
+              <div className="h-5 w-full rounded-md animate-pulse bg-gray-600 delay-750" />
+              <div className="flex-1 w-full rounded-md animate-pulse bg-gray-600 delay-900" />
+              <div className="h-5 w-1/2  rounded-md animate-pulse bg-gray-600 delay-1050" />
+            </div>
+            <div className="flex-col gap-4 p-4 h-64 w-76 bg-gray-800 animate-pulse rounded-lg xl:flex hidden" >
+              <div className="h-5 w-full rounded-md animate-pulse bg-gray-600 delay-1200" />
+              <div className="flex-1 w-full rounded-md animate-pulse bg-gray-600 delay-1350" />
+              <div className="h-5 w-1/2  rounded-md animate-pulse bg-gray-600 delay-1500" />
+            </div>
           </div>
         ) : tasks.length === 0 ? (
           <div

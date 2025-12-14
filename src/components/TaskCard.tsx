@@ -16,6 +16,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
+import { useMemo } from "react";
 
 interface TaskCardProps {
   task: ITask;
@@ -36,6 +37,9 @@ const TaskCard = ({
   onClick,
   taskEditing,
 }: TaskCardProps) => {
+  const isTaskDeleteable = useMemo(() => {
+    return dayjs().diff(dayjs(task?.createdAt), "day") <= 2;
+  }, [task]);
   return (
     <div
       onClick={() => onClick(task)}
@@ -103,13 +107,13 @@ const TaskCard = ({
             <Edit size={16} />
           </button>
           <AlertDialog>
-            <AlertDialogTrigger
-              title="Delete"
-              onClick={(e)=>e.stopPropagation()}
+            {isTaskDeleteable && <AlertDialogTrigger
+              title={`Delete (active till ${dayjs(task.createdAt).add(2, 'day').format('MMM DD, YYYY')})`}
+              onClick={(e) => e.stopPropagation()}
               className="h-8 w-8 flex flex-col items-center justify-center cursor-pointer text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-md transition-colors"
             >
               <Trash2 size={16} />
-            </AlertDialogTrigger>
+            </AlertDialogTrigger>}
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete task</AlertDialogTitle>
@@ -118,7 +122,9 @@ const TaskCard = ({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel onClick={(e)=>e.stopPropagation()} >Cancel</AlertDialogCancel>
+                <AlertDialogCancel onClick={(e) => e.stopPropagation()}>
+                  Cancel
+                </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={(e) => {
                     e.stopPropagation();

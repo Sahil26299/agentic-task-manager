@@ -69,6 +69,7 @@ export async function POST(request: Request) {
       reminder: validatedData.reminder
         ? new Date(validatedData.reminder)
         : undefined,
+      reminderSent: validatedData.reminder ? false : undefined,
       userId: decoded.userId,
     };
 

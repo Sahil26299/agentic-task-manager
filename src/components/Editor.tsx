@@ -87,45 +87,51 @@ const Editor = ({ content, onChange, editable = true }: EditorProps) => {
   return (
     <div className="border rounded-lg overflow-hidden border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
       <div className="flex flex-wrap gap-1 p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-        <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={cn(
-            "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
-            editor.isActive("bold")
-              ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
-              : "text-gray-600 dark:text-gray-300"
-          )}
-          type="button"
-          title="Bold"
-        >
-          <Bold size={18} />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={cn(
-            "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
-            editor.isActive("italic")
-              ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
-              : "text-gray-600 dark:text-gray-300"
-          )}
-          type="button"
-          title="Italic"
-        >
-          <Italic size={18} />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={cn(
-            "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
-            editor.isActive("underline")
-              ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
-              : "text-gray-600 dark:text-gray-300"
-          )}
-          type="button"
-          title="Underline"
-        >
-          <UnderlineIcon size={18} />
-        </button>
+        {editable && (
+          <button
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            className={cn(
+              "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+              editor.isActive("bold")
+                ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
+                : "text-gray-600 dark:text-gray-300"
+            )}
+            type="button"
+            title="Bold"
+          >
+            <Bold size={18} />
+          </button>
+        )}
+        {editable && (
+          <button
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            className={cn(
+              "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+              editor.isActive("italic")
+                ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
+                : "text-gray-600 dark:text-gray-300"
+            )}
+            type="button"
+            title="Italic"
+          >
+            <Italic size={18} />
+          </button>
+        )}
+        {editable && (
+          <button
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            className={cn(
+              "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+              editor.isActive("underline")
+                ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
+                : "text-gray-600 dark:text-gray-300"
+            )}
+            type="button"
+            title="Underline"
+          >
+            <UnderlineIcon size={18} />
+          </button>
+        )}
         <button
           onClick={() => editor.chain().focus().toggleStrike().run()}
           className={cn(
@@ -140,81 +146,97 @@ const Editor = ({ content, onChange, editable = true }: EditorProps) => {
           <Strikethrough size={18} />
         </button>
 
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1 self-center" />
+        {editable && (
+          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1 self-center" />
+        )}
 
-        <button
-          onClick={setLink}
-          className={cn(
-            "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
-            editor.isActive("link")
-              ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
-              : "text-gray-600 dark:text-gray-300"
-          )}
-          type="button"
-          title="Link"
-        >
-          <LinkIcon size={18} />
-        </button>
+        {editable && (
+          <button
+            onClick={setLink}
+            className={cn(
+              "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+              editor.isActive("link")
+                ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
+                : "text-gray-600 dark:text-gray-300"
+            )}
+            type="button"
+            title="Link"
+          >
+            <LinkIcon size={18} />
+          </button>
+        )}
 
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1 self-center" />
+        {editable && (
+          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1 self-center" />
+        )}
 
-        <button
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 1 }).run()
-          }
-          className={cn(
-            "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
-            editor.isActive("heading", { level: 1 })
-              ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
-              : "text-gray-600 dark:text-gray-300"
-          )}
-          type="button"
-          title="Heading 1"
-        >
-          <Heading1 size={18} />
-        </button>
-        <button
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          className={cn(
-            "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
-            editor.isActive("heading", { level: 2 })
-              ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
-              : "text-gray-600 dark:text-gray-300"
-          )}
-          type="button"
-          title="Heading 2"
-        >
-          <Heading2 size={18} />
-        </button>
-        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1 self-center" />
-        <button
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={cn(
-            "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
-            editor.isActive("bulletList")
-              ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
-              : "text-gray-600 dark:text-gray-300"
-          )}
-          type="button"
-          title="Bullet List"
-        >
-          <List size={18} />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={cn(
-            "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
-            editor.isActive("orderedList")
-              ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
-              : "text-gray-600 dark:text-gray-300"
-          )}
-          type="button"
-          title="Ordered List"
-        >
-          <ListOrdered size={18} />
-        </button>
+        {editable && (
+          <button
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 1 }).run()
+            }
+            className={cn(
+              "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+              editor.isActive("heading", { level: 1 })
+                ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
+                : "text-gray-600 dark:text-gray-300"
+            )}
+            type="button"
+            title="Heading 1"
+          >
+            <Heading1 size={18} />
+          </button>
+        )}
+        {editable && (
+          <button
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }
+            className={cn(
+              "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+              editor.isActive("heading", { level: 2 })
+                ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
+                : "text-gray-600 dark:text-gray-300"
+            )}
+            type="button"
+            title="Heading 2"
+          >
+            <Heading2 size={18} />
+          </button>
+        )}
+        {editable && (
+          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1 self-center" />
+        )}
+        {editable && (
+          <button
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            className={cn(
+              "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+              editor.isActive("bulletList")
+                ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
+                : "text-gray-600 dark:text-gray-300"
+            )}
+            type="button"
+            title="Bullet List"
+          >
+            <List size={18} />
+          </button>
+        )}
+        {editable && (
+          <button
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            className={cn(
+              "p-1.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
+              editor.isActive("orderedList")
+                ? "bg-gray-200 dark:bg-gray-700 text-blue-600"
+                : "text-gray-600 dark:text-gray-300"
+            )}
+            type="button"
+            title="Ordered List"
+          >
+            <ListOrdered size={18} />
+          </button>
+        )}
       </div>
       <EditorContent
         editor={editor}

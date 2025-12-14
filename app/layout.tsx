@@ -3,6 +3,7 @@ import "./globals.css";
 import { poppins, inter } from "@/src/utilities";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/components/AuthProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Task Manager",
@@ -58,7 +59,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.className} ${inter.variable} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children} <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

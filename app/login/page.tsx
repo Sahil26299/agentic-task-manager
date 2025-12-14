@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { API_BASE_URL, endpoints } from "@/src/utilities";
-import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -42,7 +42,7 @@ export default function LoginPage() {
       if (!res.ok) {
         throw new Error(data.error || "Login failed");
       }
-
+      toast("Login successful", { duration: 3000, style: { background: "#cfffe1ff", color: "#086600ff", fontSize: "14px" } });
       login(data.token, data.user);
       router.push("/dashboard");
     } catch (err: any) {
