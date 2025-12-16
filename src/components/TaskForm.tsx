@@ -54,7 +54,7 @@ const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
 
     setLoading(true);
     try {
-      await onSave({ title, body, reminder: dayjs(new Date(date)).add(9, "hour").format("YYYY-MM-DDTHH:mm") || undefined });
+      await onSave({ title, body, reminder: dayjs(new Date(date)).add(9, "hour") || undefined });
       onCancel();
     } catch (error) {
       console.error("Failed to save task:", error);
