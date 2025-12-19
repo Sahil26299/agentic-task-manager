@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Task, { ITask } from "@/models/Task";
 import dayjs from "dayjs";
-import { sendWhatsAppMessage } from "../whatsapp-incoming/functions";
+import { sendEmail, sendWhatsAppMessage } from "../(serverUtils)/functions";
 import User from "@/models/User";
 import { generateUrlSlug } from "@/src/utilities";
 
@@ -37,6 +37,16 @@ export async function GET() {
                 const phoneNumber = `${countryCode}${user.phone}`;
 
                 await sendWhatsAppMessage(phoneNumber, message);
+
+                if (user?.email) {
+                  await sendEmail(
+                    user?.email,
+                    `${task.title?.trim()} - Reminder`,
+                    `Your task ${task.title?.trim()?.toUpperCase()} is due today.\nYou can access it on https://agentic-task-manager.vercel.app/dashboard/${generateUrlSlug(
+                      task.title
+                    )}/${task._id}`
+                  );
+                }
 
                 // Mark as sent in db for that task
                 await Task.findByIdAndUpdate(

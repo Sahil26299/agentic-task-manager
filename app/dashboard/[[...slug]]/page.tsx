@@ -217,6 +217,7 @@ export default function Home({ params }: any) {
     title: string;
     body: string;
     reminder?: any;
+    reminderSent?: boolean;
   }) => {
     if (!editingTask || !token) return;
     try {

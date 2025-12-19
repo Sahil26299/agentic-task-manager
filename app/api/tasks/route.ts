@@ -13,7 +13,7 @@ const createTaskSchema = z.object({
 
 import { verifyToken } from "@/lib/auth";
 import User from "@/models/User";
-import { sendWhatsAppMessage } from "../whatsapp-incoming/functions";
+import { sendWhatsAppMessage } from "../(serverUtils)/functions";
 import { generateUrlSlug } from "@/src/utilities";
 
 export async function GET(request: Request) {

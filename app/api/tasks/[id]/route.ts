@@ -7,6 +7,7 @@ const updateTaskSchema = z.object({
   title: z.string().min(1, "Title is required").optional(),
   body: z.string().optional(),
   reminder: z.string().optional().nullable(),
+  reminderSent: z.boolean().optional(),
   tags: z.array(z.string()).optional(),
   isCompleted: z.boolean().optional(),
 });

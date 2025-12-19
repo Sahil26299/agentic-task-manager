@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { extractTaskDetails, sendWhatsAppMessage } from "./functions";
+import {
+  extractTaskDetails,
+  sendWhatsAppMessage,
+} from "../(serverUtils)/functions";
 import dbConnect from "@/lib/db";
 import Task, { ITask } from "@/models/Task";
 
@@ -14,13 +17,17 @@ export async function POST(request: Request) {
     // 1. Extract Fields using AI
     let extractedData;
     try {
-      extractedData = await extractTaskDetails(incomingMessage as string, from as string);
+      extractedData = await extractTaskDetails(
+        incomingMessage as string,
+        from as string
+      );
       console.log("Extracted Data:", extractedData);
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("Extraction failed:", error?.message);
       await sendWhatsAppMessage(
         from as string,
-        error?.message || "Sorry, I couldn't understand the task details. Please provide title and body to start creating your tasks."
+        error?.message ||
+          "Sorry, I couldn't understand the task details. Please provide title and body to start creating your tasks."
       );
       return NextResponse.json(
         "Sorry, I couldn't understand the details provided.",

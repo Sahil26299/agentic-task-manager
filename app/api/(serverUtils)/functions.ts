@@ -3,6 +3,7 @@ import { z } from "zod";
 import { config } from "./config";
 import twilio from "twilio";
 import User from "@/models/User";
+import { Resend } from "resend";
 
 const extractionSchema = z.object({
   title: z.string().describe("Title of the task"),
@@ -87,3 +88,15 @@ export const sendWhatsAppMessage = async (to: string, body: string) => {
     throw error;
   }
 };
+
+
+const resend = new Resend(config.resendApiKey);
+
+export async function sendEmail(to: string, subject: string, text: string) {
+  await resend.emails.send({
+    from: "onboarding@resend.dev",
+    to,
+    subject,
+    text,
+  });
+}

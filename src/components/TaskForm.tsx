@@ -19,6 +19,7 @@ interface TaskFormProps {
     title: string;
     body: string;
     reminder?: any;
+    reminderSent?: boolean;
   }) => Promise<void>;
   onCancel: () => void;
   isOpen: boolean;
@@ -30,7 +31,7 @@ const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
   const [openDatePopover, setOpenDatePopover] = useState(false);
   const [date, setDate] = useState<any | undefined>(undefined);
   const [loading, setLoading] = useState(false);
-  console.log(task, body, "task");
+  const [dateChanged, setDateChanged] = useState(false)
 
   useEffect(() => {
     if (task) {
@@ -54,7 +55,7 @@ const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
 
     setLoading(true);
     try {
-      await onSave({ title, body, reminder: dayjs(new Date(date)).add(9, "hour") || undefined });
+      await onSave({ title, body, reminder: dayjs(new Date(date)).add(9, "hour") || undefined, reminderSent: task ? !dateChanged : false});
       onCancel();
     } catch (error) {
       console.error("Failed to save task:", error);
@@ -152,12 +153,18 @@ const TaskForm = ({ task, onSave, onCancel, isOpen }: TaskFormProps) => {
                   <Calendar
                     mode="single"
                     selected={date}
+                    startMonth={new Date()}
                     endMonth={new Date(2030, 0)}
                     captionLayout="dropdown"
                     onSelect={(value) => {
                       if (value) {
                         setDate(dayjs(new Date(value)).format("MM/DD/YYYY"));
-                        setOpenDatePopover(false);
+                        setOpenDatePopover(false);   
+                        if(dayjs(task?.reminder).diff(new Date(value), "day") === 0){
+                          setDateChanged(false)
+                        }else{
+                          setDateChanged(true)
+                        }                        
                       }
                     }}
                   />
