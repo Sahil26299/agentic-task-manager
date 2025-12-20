@@ -145,6 +145,11 @@ export default function Home({ params }: any) {
           Authorization: `Bearer ${token}`,
         },
       });
+      // await fetch(`${API_BASE_URL}/cron`, {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // });
       if (res.ok) {
         const data = await res.json();
         setTasks(data);

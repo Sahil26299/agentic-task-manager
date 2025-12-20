@@ -50,10 +50,12 @@ export const extractTaskDetails = async (message: string, from: string) => {
     const user = await User.findOne({
       phone: from?.replace("whatsapp:+91", ""),
     });
-    if(user){
+    if (user) {
       return { ...result, userId: user?._id };
-    }else{
-      throw new Error("Please register yourself (or add your what's app number) in the application to create tasks. https://agentic-task-manager.vercel.app/dashboard.");
+    } else {
+      throw new Error(
+        "Please register yourself (or add your what's app number) in the application to create tasks. https://agentic-task-manager.vercel.app/dashboard."
+      );
     }
   } catch (error) {
     console.error("Error extracting artist details:", error);
@@ -89,14 +91,22 @@ export const sendWhatsAppMessage = async (to: string, body: string) => {
   }
 };
 
-
 const resend = new Resend(config.resendApiKey);
 
+import { generateEmailHtml } from "./emailTemplate";
+
 export async function sendEmail(to: string, subject: string, text: string) {
-  await resend.emails.send({
-    from: "onboarding@resend.dev",
-    to,
-    subject,
-    text,
-  });
+  const html = generateEmailHtml(subject, text);
+  try {
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to,
+      subject,
+      text,
+      html,
+    });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  }
 }
